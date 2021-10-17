@@ -72,7 +72,9 @@ val patternA = List(-2, -1, 0, 1, 2)
 val patternB = List((1, 2), (0, 1))
 
 val List(_, _, x, _, _) = patternA;
-val List(_, (0, _)) = patternB;
+val List(_, (y, _)) = patternB;
+x == 0
+y == 0
 
 //5
 def initSegment[A](xs: List[A], ys: List[A]): Boolean = {
@@ -86,3 +88,29 @@ def initSegment[A](xs: List[A], ys: List[A]): Boolean = {
   }
 }
 //5 tests
+initSegment(List(1, 2, 3), List(1, 2, 3))
+initSegment(List(), List())
+initSegment(List(), List(1))
+initSegment(List(2), List(1)) == false
+initSegment(List("a", "b"), List("a", "b", "c"))
+initSegment(List("a", "b", "c"), List("a", "b")) == false
+
+//6a
+
+def replaceNth[A](xs: List[A], n: Int, x: A): List[A] = {
+  (xs, n) match {
+    case (Nil, _) => Nil
+    case (_::tail, 0) => x :: tail
+    case (head::tail, _) => head :: replaceNth(tail, n - 1, x)
+  }
+}
+
+replaceNth(List(1, 2, 3, 4, 5), 0, 10) == List(10, 2, 3, 4, 5)
+replaceNth(List(1, 2, 3, 4, 5), 1, 10) == List(1, 10, 3, 4, 5)
+replaceNth(List(1, 2, 3, 4, 5), 3, 10) == List(1, 2, 3, 10, 5)
+replaceNth(List(1, 2, 3, 4, 5), 11, 10) == List(1, 2, 3, 4, 5)
+
+val list1 = List('o', 'l', 'a', 'm', 'a', 'k', 'o', 't', 'a')
+val list2 = List('o', 's', 'a', 'm', 'a', 'k', 'o', 't', 'a')
+
+replaceNth(list1, 1, 's') == list2

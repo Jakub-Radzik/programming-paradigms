@@ -40,12 +40,15 @@ def sqrList(xs: List[Int]): List[Int] = {
     xs.head * xs.head :: sqrList(xs.tail)
     )
 }
+val sqrListFUNCTION = (xs: List[Int]) => sqrList(xs)
+
 //4 Tests
 sqrList(List(1, 2, 3, -4)) == List(1, 4, 9, 16)
 sqrList(List(20)) == List(400)
 sqrList(List(-20)) == List(400)
 sqrList(List(0, 0, 0)) == List(0, 0, 0)
 sqrList(List()) == Nil
+sqrListFUNCTION(List()) == Nil
 
 //5
 def palindrome[A](xs: List[A]): Boolean = {
