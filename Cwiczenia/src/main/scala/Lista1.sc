@@ -48,14 +48,18 @@ sqrList(List(20)) == List(400)
 sqrList(List(-20)) == List(400)
 sqrList(List(0, 0, 0)) == List(0, 0, 0)
 sqrList(List()) == Nil
+sqrListFUNCTION(List(1, 2, 3, -4)) == List(1, 4, 9, 16)
+sqrListFUNCTION(List(20)) == List(400)
+sqrListFUNCTION(List(-20)) == List(400)
+sqrListFUNCTION(List(0, 0, 0)) == List(0, 0, 0)
 sqrListFUNCTION(List()) == Nil
-
 //5
 def palindrome[A](xs: List[A]): Boolean = {
   if (xs == xs.reverse) true else
     false
 }
 //5 Tests
+palindrome(List('a', 'l', 'a')) == true
 palindrome(List('k', 'a', 'y', 'a', 'k')) == true
 palindrome(List('k', 'a', 'y', 'a')) == false
 palindrome(List(1, 2, 3)) == false
