@@ -2,6 +2,7 @@
 //1
 
 //2
+//rozwijanie
 //bez lukru
 def curry3[a, b, c, d](f: (a, b, c) => d): a => b => c => d = x => y => z => f(x, y, z)
 //z lukrem
@@ -9,6 +10,7 @@ def plusC(a: Int, b: Int, c: Int): Int = a + b + c
 
 curry3(plusC)(3)(4)(5)
 
+//zwijanie
 //bez lukru
 def uncurry3[a, b, c, d](f: a => b => c => d) = (x: a, y: b, z: c) => f(x)(y)(z)
 //z lukrem
@@ -30,54 +32,24 @@ sumProd(List(5, 5, 5, 5, 5)) == (25, 3125)
 
 //5
 //a
-val comparator = (a: Int, b: Int) => a > b
 
-def insertionsort[A](comparator: (A, A) => Boolean, list: List[A]): List[A] = {
-  def insertionSortHelper[A](comparator: (A, A) => Boolean, list: List[A], resultList: List[A]): List[A] = {
-    (list, resultList) match {
-      case (Nil, _) => resultList
-      case (list, Nil) => insertionSortHelper(comparator, list.tail, list.head :: Nil)
-      case (listUnordered, listOrdered) => {
-        def checker(element: A, resultList: List[A]): List[A] = {
-          if resultList == Nil then element :: Nil
-          else if comparator(element, resultList.head) then resultList.head :: checker(element, resultList.tail)
-          else element :: resultList
-        }
-
-        insertionSortHelper(comparator, list.tail, checker(listUnordered.head, listOrdered))
-      }
+def insertionsort[A](pred: (A, A) => Boolean, xs: List[A]): List[A] = {
+  def insert(x: A, xs: List[A]): List[A] = {
+    xs match {
+      case Nil => List(x)
+      case h :: t =>
+        if(pred(h, x)) h :: insert(x, t)
+        else x :: xs
     }
   }
-
-  insertionSortHelper(comparator, list, List())
+  (xs foldLeft List[A]()) ((acc, x) => insert(x, acc))
 }
 
-insertionsort(comparator, List(9, 1, 8, 4, 2)) == List(1, 2, 4, 8, 9)
-insertionsort(comparator, List(10, 9, 8)) == List(8, 9, 10)
-insertionsort(comparator, List(11, 9, 11)) == List(9, 11, 11)
-insertionsort(comparator, List(10, 1, 2, 3, 4, 5)) == List(1, 2, 3, 4, 5, 10)
-
-//TODO: testowanie stabilności
-
-//b
-def mergesort[A](comparator: (A, A) => Boolean, list: List[A]): List[A] = {
-  val partition = list.length / 2
-  if partition == 0 then list
-  else {
-    def merge(list1: List[A], list2: List[A]): List[A] = (list1, list2) match {
-      case (Nil, list2) => list2
-      case (list1, Nil) => list1
-      case (head1 :: tail1, head2 :: tail2) =>
-        if comparator(head2, head1) then head1 :: merge(tail1, list2)
-        else head2 :: merge(list1, tail2)
-    }
-
-    val (left, right) = list.splitAt(partition)
-    merge(mergesort(comparator, left), mergesort(comparator, right))
-  }
-}
-
-mergesort(comparator, List(9, 1, 8, 4, 2)) == List(1, 2, 4, 8, 9)
-mergesort(comparator, List(10, 9, 8)) == List(8, 9, 10)
-mergesort(comparator, List(11, 9, 11)) == List(9, 11, 11)
-mergesort(comparator, List(10, 1, 2, 3, 4, 5)) == List(1, 2, 3, 4, 5, 10)
+insertionsort((a: Int, b: Int) => a < b, List(9, 1, 8, 4, 2)) == List(1, 2, 4, 8, 9)
+insertionsort((a: Int, b: Int) => a < b, List(10, 9, 8)) == List(8, 9, 10)
+insertionsort((a: Int, b: Int) => a < b, List(11, 9, 11)) == List(9, 11, 11)
+insertionsort((a: Int, b: Int) => a < b, List(10, 1, 2, 3, 4, 5)) == List(1, 2, 3, 4, 5, 10)
+//TEST STABILNOSCI
+insertionsort((p1:(Int, Int), p2:(Int, Int)) => p1._1 <= p2._1, List((1,2),(1,3),(2,3),(2,4),(200,2),(100,1),(120,3))) == List((1,2), (1,3), (2,3), (2,4), (100,1), (120,3), (200,2))
+insertionsort((p1:(Int, Int), p2:(Int, Int)) => p1._1 <= p2._1, List((1,3),(1,2),(2,3),(2,4),(200,2),(100,1),(120,3))) == List((1,3), (1,2), (2,3), (2,4), (100,1), (120,3), (200,2))
+insertionsort((x: (Int, Char), y: (Int, Char)) => x._1 <= y._1, List((5, 'a'), (3, 'a'), (5, 'b'), (6, 'a'), (2, 'a'), (9, 'a'), (6, 'b'), (2, 'b'), (6, 'c'))) == List((2,'a'), (2,'b'), (3,'a'), (5,'a'), (5,'b'), (6,'a'), (6,'b'), (6,'c'), (9,'a'))
