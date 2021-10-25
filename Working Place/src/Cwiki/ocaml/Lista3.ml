@@ -1,9 +1,15 @@
 (*Jakub Radzik*)
 (*1*)
-let f1 x = x 1 1;;
+let f1 x = x 2 2;;
 (*  (int -> int -> 'a) -> 'a *)
+(*f(x)*)
+(*x: int -> int -> a*)
+(*f1: funkcja -> a*)
 
 let f2 x y z = x (y ^ z);;
+(*y, z - string*)
+(*x: string -> string -> 'a*)
+(*f2: (string -> 'a) -> string -> string -> 'a *)
 (* (string -> 'a) -> string -> string -> 'a  *)
 
 (*2*)
