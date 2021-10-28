@@ -1,28 +1,19 @@
 (*Jakub Radzik*)
-(*1*)
-let f1 x = x 2 2;;
-(*  (int -> int -> 'a) -> 'a *)
-(*f(x)*)
-(*x: int -> int -> a*)
-(*f1: funkcja -> a*)
-
-let f2 x y z = x (y ^ z);;
-(*y, z - string*)
-(*x: string -> string -> 'a*)
-(*f2: (string -> 'a) -> string -> string -> 'a *)
-(* (string -> 'a) -> string -> string -> 'a  *)
 
 (*2*)
-(*lukier*)
 let curry3 f a b c = f(a,b,c);;
-let curry3a f = function x -> (function y -> (function z -> f(x,y,z)));;
-(* val curry3 : ('a * 'b * 'c -> 'd) -> 'a -> 'b -> 'c -> 'd = <fun> *)
+let curry3 f = function x -> (function y -> (function z -> f(x,y,z)));;
 
 let uncurry3 f (x,y,z) = f x y z;;
-let uncurry3a = function  f -> function (x,y,z) -> f x y z ;;
-(*val uncurry3a : ('a -> 'b -> 'c -> 'd) -> 'a * 'b * 'c -> 'd = <fun>*)
+let uncurry3 = function  f -> function (x,y,z) -> f x y z ;;
 
 (*3*)
+let rec sumProd l =
+  match l with
+      h::t -> let (s,p) = sumProd t in (h+s,h*p)
+      | [] -> (0,1);;
+let sumProdF = List.fold_left(fun (x,y) k -> (x+k,y*k))(0,1);;
+
 (*4*)
 
 (*5*)

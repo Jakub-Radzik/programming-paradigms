@@ -23,4 +23,5 @@ def area(a: Double, b: Double)(f: Double => Double)(n: Int) = {
 }
 
 area(1.0, 4.0)(x => x * x)(2)
-area(0.0, 1.0)(x => x * x * x)(1000)
+area(1.0, 4.0)(x => x)(10000)
+area(0.0, 1.0)(x => x * x * x)(10000)
