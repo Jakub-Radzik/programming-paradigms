@@ -1,7 +1,21 @@
 (*Jakub Radzik*)
 
+(*1*)
+let f1 x y z = x y z;;
+(*
+val f1 : ('a -> 'b -> 'c) -> 'a -> 'b -> 'c = <fun>
+*)
+
+let f2 x y = function z -> x::y;;
+(*
+val f2 : 'a -> 'a list -> 'b -> 'a list = <fun>
+*)
+
 (* 2 *)
 let rec f x = f x;;
+(*
+val f : 'a -> 'b = <fun>
+*)
 
 (*TREES*)
 type 'a bt = Empty | Node of 'a * 'a bt * 'a bt;;
@@ -39,6 +53,7 @@ let breadthBT tree =
 	in breadth [tree];;
 
 breadthBT tt = [1; 2; 3; 4; 5; 6];;
+breadthBT Empty = [];;
 breadthBT myTree = [1; 2; 10; 4; 11; 12; 9; 10];;
 
 (*4 a*)
@@ -54,6 +69,7 @@ let internalBT tree =
 
 internalBT tt = 9;;
 internalBT myTree = 14;;
+(*internalBT Empty;; wyjątek rzucany *)
 
 (*4 b*)
 
@@ -61,7 +77,7 @@ let externalBT tree =
 	let rec ext t acc = match t with
 		| Empty -> acc
 		| Node(_,Empty,Empty) -> 2*(acc+1)
-		| Node(_,left,Empty) -> acc+1 + (ext left (acc+1))
+		| Node(_,left,Empty) -> (ext left (acc+1)) + acc + 1
 		| Node(_,Empty,right) -> acc+1 + (ext right (acc+1))
 		| Node(_,left,right) -> (ext left (acc+1)) + (ext right (acc+1))
 	in ext tree 0;;
@@ -79,14 +95,14 @@ let g = Graph(function
 	| 2 -> [1]
 	| 3 -> []
 	| 4 -> [0;2]
-	| n -> failwith("node "^string_of_int n^" dont exist")
+	| n -> failwith("node "^string_of_int n^" does not exist")
 	);;
 
-let depthSearch (Graph succ) n =
+let depthSearch (Graph graph) n =
   let rec search visited = function
     [] -> []
     | h::t -> if List.mem h visited then search visited t
-    else h::search (h::visited) (succ h @ t)
+    else h::search (h::visited) (graph h @ t)
   in search [] [n];;
 
 

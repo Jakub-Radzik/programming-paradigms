@@ -1,9 +1,7 @@
 //JAKUB RADZIK
 
 sealed trait BT[+A]
-
 case object Empty extends BT[Nothing]
-
 case class Node[+A](elem: A, left: BT[A], right: BT[A]) extends BT[A]
 
 // Test trees
@@ -31,17 +29,17 @@ val myTree = Node(1,
 )
 
 //3
-def breadthBT[A](t: BT[A]): List[A] = {
+def breadthBT[A](tree: BT[A]): List[A] = {
   def breadth(list: List[BT[A]]): List[A] = list match {
     case Nil => Nil
-    case Empty :: tl => breadth(tl)
+    case Empty :: taill => breadth(taill)
     case Node(value, left, right) :: tail => value :: breadth(tail ::: (left :: right :: Nil))
   }
-
-  breadth(List(t))
+  breadth(List(tree))
 }
 
 breadthBT(tt) == List(1, 2, 3, 4, 5, 6)
+breadthBT(Empty) == List()
 breadthBT(myTree) == List(1, 2, 10, 4, 11, 12, 9, 10)
 
 // 4 a
@@ -56,7 +54,7 @@ def internalBT[A](tree: BT[A]): Int = {
 
   inter(tree, 0)
 }
-
+//internalBT(Empty) - wyjątek
 internalBT(tt) == 9
 internalBT(myTree) == 14
 
@@ -79,7 +77,6 @@ externalBT(myTree) == 30
 // 5
 
 sealed trait Graphs[A]
-
 case class Graph[A](succ: A => List[A]) extends Graphs[A]
 
 val graph = Graph((i: Int) => i match {
