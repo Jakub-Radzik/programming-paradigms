@@ -19,3 +19,4 @@ let area (a, b) f n =
 
 area (1.0, 4.0) (fun x -> x *. x) 2;;
 area (0.0, 1.0) (fun x -> x *. x *. x) 1000;;
+
