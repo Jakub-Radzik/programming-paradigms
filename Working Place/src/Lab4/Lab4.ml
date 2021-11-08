@@ -1,65 +1,67 @@
 (*  1   *)
 type 'a bt = Empty | Node of 'a * 'a bt * 'a bt * 'a bt;;
 
-let int_tree =Node(1,
-            Node(2,Empty,Node(5,Empty,Empty,Empty),Empty),
-            Node(3,Node(6,Empty,Empty,Empty),Empty,Empty),
-            Node(4,Empty,Empty,Node(7,Empty,Empty,Empty))
-            );;
-
-let string_tree =Node("a",
-    Node("b",Empty,Node("e",Empty,Empty,Empty),Empty),
-    Node("c",Node("f",Empty,Empty,Empty),Empty,Empty),
-    Node("d",Empty,Empty,Node("g",Empty,Empty,Empty))
-    );;
+let n7 = Node(7, Empty, Empty, Empty);;
+let n6 = Node(6, Empty, Empty, Empty);;
+let n5 = Node(5, Empty, Empty, Empty);;
+let n4 = Node(4, Empty, Empty, n7);;
+let n3 = Node(3, n6, Empty, Empty);;
+let n2 = Node(2, Empty, n5, Empty);;
+let int_tree = Node(1, n2, n3, n4);;
 
 let rec mapTree3 f = function
     | Empty -> Empty
     | Node(e,l,c,r) -> Node(f e,mapTree3 f l, mapTree3 f c, mapTree3 f r);;
 
-mapTree3 (fun x -> 2*x) int_tree;;
-mapTree3 (fun x -> 2*x) Empty;;
-mapTree3 (fun x -> x^x) string_tree;;
+mapTree3 (fun x -> 2*x) int_tree = Node (2, Node (4, Empty, Node (10, Empty, Empty, Empty), Empty),
+                                    Node (6, Node (12, Empty, Empty, Empty), Empty, Empty),
+                                    Node (8, Empty, Empty, Node (14, Empty, Empty, Empty)));;
+mapTree3 (fun x -> 2*x) Empty = Empty;;
 
 (*  2   *)
 (*a*)
-(*słowo ma co najmniej jedną literę*)
 type word = Word of char * string;;
 
-(*sentencja to conajmniej jedno słowo*)
 type sentence = Declarative of word * word list |
                 Exclamatory of word * word list |
                 Interrogative of word * word list;;
 
-(*text to conajmniej jedna sentencja*)
 type text = Text of sentence * sentence list;;
 
-(*b*)
+(*test types*)
+let ala = Word('a', "la");;
+let ma = Word('m', "a");;
+let kota = Word('k', "ota");;
 
+let declarative= Declarative(ala,[ma;kota]);;
+let interrogative= Interrogative(ala,[ma;kota]);;
+let exclamatory= Exclamatory(ala,[ma;kota]);;
+let text= Text(declarative,[interrogative;exclamatory]);;
+
+(*b*)
+(*helpers:*)
 let char_to_string = String.make 1;;
 
-let capital = function
-    | Word(chr, str) -> (char_to_string (Char.uppercase chr)) ^ str;;
-
-let capital (word: word) =
+let capital_letter (word: word) =
     match word with
     | Word(chr, str) -> (char_to_string (Char.uppercase chr)) ^ str;;
 
-let word_to_string = function
+let word_to_string (word: word) =
+    match word with
     | Word(chr, str) -> " " ^ char_to_string (chr) ^ str ;;
 
-let sentenceToString = function
-    | Declarative(x, xs) -> capital (x) ^ (List.fold_left (fun acc -> fun x -> acc ^ word_to_string x) "" xs) ^ "."
-    | Exclamatory(x, xs) -> capital (x) ^ (List.fold_left (fun acc -> fun x -> acc ^ word_to_string x) "" xs) ^ "!"
-    | Interrogative(x, xs) -> capital (x) ^ (List.fold_left (fun acc -> fun x -> acc ^ word_to_string x) "" xs) ^ "?";;
 
-let textToString = function
-| Text(x, xs) -> (sentenceToString x) ^ (List.fold_left (fun acc -> fun x -> acc ^ " " ^ sentenceToString x) "" xs);;
+(*done:*)
+let folder = fun acc -> fun word -> acc ^ word_to_string word;;
+let sentence_to_string (sentence: sentence) =
+    match sentence with
+    | Declarative(x, xs) -> capital_letter(x) ^ (List.fold_left (folder) "" xs) ^ "."
+    | Exclamatory(x, xs) -> capital_letter(x) ^ (List.fold_left (folder) "" xs) ^ "!"
+    | Interrogative(x, xs) -> capital_letter(x) ^ (List.fold_left (folder) "" xs) ^ "?";;
 
-let s1= Declarative(Word('a',"la"),[Word('m',"a");Word('k',"ota")]);;
-let s2= Interrogative(Word('o',"la"),[Word('m',"a");Word('k',"ota")]);;
-let s3= Exclamatory(Word('A',"la"),[Word('m',"a");Word('k',"ota")]);;
-let t1= Text(s1,[s2;s3]);;
+let text_to_string (text: text) =
+    match text with
+    | Text(x, xs) -> (sentence_to_string x) ^ (List.fold_left (fun acc -> fun x -> acc ^ " " ^ sentence_to_string x) "" xs);;
 
-sentenceToString s1;;
-textToString t1;;
+sentence_to_string declarative = "Ala ma kota.";;
+text_to_string text = "Ala ma kota. Ala ma kota? Ala ma kota!";;
