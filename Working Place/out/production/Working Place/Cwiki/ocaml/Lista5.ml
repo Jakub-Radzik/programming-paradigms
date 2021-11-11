@@ -1,16 +1,7 @@
 (* Jakub Radzik *)
-
-(*definicja list leniwych*)
-
-type 'a llist = LNil | LCons of 'a * 'a llist Lazy.t;;
-
-let rec ltake = function
-      (0, _) -> []
-    | (_, LNil) -> []
-    | (n, LCons(x,lazy xs)) -> x::ltake(n-1,xs);;
-
 (*1*)
 
+type 'a llist = LNil | LCons of 'a * 'a llist Lazy.t;;
 
 (*let rec toLazyList = function*)
 (*	| [] -> LNil*)
@@ -31,12 +22,17 @@ let rec ltake = function
 
 (*(* 2 *)*)
 
-let lfib =
-    let rec lfibIn(p, n) =
-        LCons(p+n, lazy(lfibIn(n, p+n))) in
-    LCons(1, lazy(LCons(1, lazy(lfibIn(1, 1)))));;
+(*let lfib =*)
+(*	let rec fib a b = LCons(a,fun() -> fib b (a+b))*)
+(*	in fib 1 1;;*)
 
-ltake(15,lfib);;
+
+(*let rec ltake = function*)
+(*	(0, _) -> []*)
+(*	| (_, LNil) -> []*)
+(*	| (n, LCons(x,xf)) -> x::ltake(n-1, xf());;*)
+
+(*ltake(15,lfib);;*)
 
 (*(* 3 *)*)
 
