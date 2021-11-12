@@ -24,12 +24,13 @@ def lfib(): LazyList[Int] = {
   fib(1, 1)
 }
 
-lfib().take(15).toList
-lfib().take(2).toList
-lfib().take(1).toList
+lfib().take(15).toList == List(1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610)
+lfib().take(3).toList == List(1, 1, 2)
+lfib().take(1).toList == List(1)
+lfib().take(0).toList == List()
+
 
 // 3
-
 sealed trait lBT[+A]
 
 case object LEmpty extends lBT[Nothing]
@@ -37,9 +38,6 @@ case object LEmpty extends lBT[Nothing]
 case class LNode[+A](elem: A, left: () => lBT[A], right: () => lBT[A]) extends lBT[A]
 
 // 3 a
-def generateTree(n: Int): lBT[Int] =
-  LNode(n, () => generateTree(2 * n), () => generateTree(2 * n + 1))
-
 def lBreadth[A](ltree: lBT[A]): LazyList[A] = {
   def lBreadthHelper(list: List[lBT[A]]): LazyList[A] =
     list match {
@@ -52,18 +50,14 @@ def lBreadth[A](ltree: lBT[A]): LazyList[A] = {
 }
 
 // 3 b
-def lTree(n: Int): lBT[Int] = LNode(n, () => lTree(2 * n), () => lTree(2 * n + 1))
+def lTree(n: Int): lBT[Int] =
+  LNode(
+    n,
+    () => lTree(2 * n),
+    () => lTree(2 * n + 1)
+  )
 
-def lTreeToList[A](tree: lBT[A]): LazyList[A] = {
-  def toLlist(list: List[lBT[A]]): LazyList[A] = list match {
-    case Nil => LazyList.empty
-    case LEmpty :: tl => toLlist(tl)
-    case LNode(v, l, r) :: tl => v #:: toLlist(tl ++ (l() :: r() :: Nil))
-  }
-
-  toLlist(List(tree))
-}
-
-//3 tests
 lBreadth(lTree(1)).take(20).toList == List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 lBreadth(LEmpty).take(20).toList == List()
+lBreadth(lTree(3)).take(10).toList == List(3, 6, 7, 12, 13, 14, 15, 24, 25, 26)
+
