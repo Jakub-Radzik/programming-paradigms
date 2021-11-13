@@ -1,50 +1,56 @@
 (* Jakub Radzik *)
-(*1*)
+
+(*definicja list leniwych*)
 
 type 'a llist = LNil | LCons of 'a * 'a llist Lazy.t;;
 
-(*let rec toLazyList = function*)
-(*	| [] -> LNil*)
-(*	| h::t -> LCons(h, function() -> toLazyList t);;*)
+let rec lfrom k = LCons (k, lazy (lfrom (k+1)));;
 
-(*let rec lloop = function LNil -> []*)
-(*	| LCons(v,f) -> v :: (lloop @@ f());;*)
+let rec ltake = function
+      (0, _) -> []
+    | (_, LNil) -> []
+    | (n, LCons(x,lazy xs)) -> x::ltake(n-1,xs);;
 
-(*let rec lrepeat n list =*)
-(*	let rec repeat v r tl =*)
-(*		if r=0 then tl*)
-(*		else repeat v (r-1) (LCons(v,fun() -> tl))*)
-(*	in match list with*)
-(*		| LNil -> LNil*)
-(*		| LCons(v,tlf) -> repeat v n (lrepeat n (tlf()));;*)
+(*1*)
+let lrepeat k ll =
+    if k < 1
+        then failwith "Liczba powtorzen mniejsza niz 1"
+    else
+        let rec helper (rpts, rest) =
+            match (rpts, rest) with
+                (_, LNil) -> LNil
+              | (0, LCons(_, lazy tl)) -> helper(k, tl)
+              | (_, LCons(hd, _)) -> LCons(hd, lazy (helper(rpts - 1, rest)))
+        in helper (k, ll);;
 
-(*lloop @@ lrepeat 3 (toLazyList [0;1;2;3]);;*)
 
 (*(* 2 *)*)
 
 (*let lfib =*)
-(*	let rec fib a b = LCons(a,fun() -> fib b (a+b))*)
-(*	in fib 1 1;;*)
+(*    let rec lfibIn(p, n) =*)
+(*        LCons(p+n, lazy(lfibIn(n, p+n))) in*)
+(*    LCons(1, lazy(LCons(1, lazy(lfibIn(1, 1)))));;*)
+
+(*ltake(15,lfib) = [1; 1; 2; 3; 5; 8; 13; 21; 34; 55; 89; 144; 233; 377; 610];;*)
+(*ltake(3,lfib)= [1; 1; 2];;*)
+(*ltake(1,lfib) = [1];;*)
+(*ltake(0,lfib) = [];;*)
+
+(* 3 *)
+
+type 'a lBT = LEmpty | LNode of 'a * (unit ->'a lBT) * (unit -> 'a lBT) ;;
+
+let rec lTree n = LNode(n,(fun() -> lTree (2*n)),(fun() -> lTree (2*n+1)));;
+
+let lBreadth ltree =
+  let rec breadthHelper = function
+      [] -> LNil
+      | LEmpty::t -> breadthHelper t
+      | LNode(v, l, r)::t -> LCons(v, lazy (breadthHelper(t @ [l() ; r()])))
+    in breadthHelper [ltree];;
 
 
-(*let rec ltake = function*)
-(*	(0, _) -> []*)
-(*	| (_, LNil) -> []*)
-(*	| (n, LCons(x,xf)) -> x::ltake(n-1, xf());;*)
-
-(*ltake(15,lfib);;*)
-
-(*(* 3 *)*)
-
-(*type 'a lBT = LEmpty | LNode of 'a * (unit ->'a lBT) * (unit -> 'a lBT);;*)
-
-(*let rec lTree n = LNode(n,(fun() -> lTree (2*n)),(fun() -> lTree (2*n+1)));;*)
-
-(*let lTreeToList tree =*)
-(*	let rec toLlist = function*)
-(*		| [] -> LNil*)
-(*		| LEmpty::tl -> toLlist tl*)
-(*		| LNode(v, l, r)::tl -> LCons(v,fun() -> toLlist (tl @ l()::r()::[]))*)
-(*	in toLlist [tree];;*)
-
-(*ltake(10,lTreeToList @@ lTree 1);;*)
+lBreadth(lTree(1));;
+ltake(20, lBreadth(lTree(1))) = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20];;
+ltake(20, lBreadth(LEmpty)) = [];;
+ltake(10, lBreadth(lTree(3))) = [3; 6; 7; 12; 13; 14; 15; 24; 25; 26];;
