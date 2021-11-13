@@ -1,7 +1,7 @@
 //Jakub Radzik
 // 1
 def lrepeat[A](k: Int)(lxs: LazyList[A]): LazyList[A] = {
-  if (k < 1) throw new Exception("liczba powtorzen mniejsza niz 1")
+  if (k < 1) then throw new Exception("liczba powtorzen mniejsza niz 1")
 
   def lrepeatHelper(repeats: Int, rest: LazyList[A]): LazyList[A] =
     (repeats, rest) match {
