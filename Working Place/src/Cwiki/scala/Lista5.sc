@@ -43,7 +43,7 @@ def lBreadth[A](ltree: lBT[A]): LazyList[A] = {
     list match {
       case Nil => LazyList()
       case LEmpty :: tl => lBreadthHelper(tl)
-      case LNode(v, l, r) :: tl => v #:: lBreadthHelper(tl ++ List(l(), r()))
+      case LNode(v, l, r) :: tl => v #:: lBreadthHelper(tl ::: List(l(), r()))
     }
 
   lBreadthHelper(List(ltree))
