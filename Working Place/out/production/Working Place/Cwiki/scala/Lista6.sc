@@ -65,3 +65,7 @@ def quick(tab: Array[Int], l: Int, r: Int): Unit = {
 
 //d
 def quicksort(tab: Array[Int]) = quick(tab, 0, tab.length - 1)
+
+val tab = Array(1,5,3,2,4,345,534,534,53434,2313,3,3,3,3,3,4,4,4,4)
+quicksort(tab);
+tab
