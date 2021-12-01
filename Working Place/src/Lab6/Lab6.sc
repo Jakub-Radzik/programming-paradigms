@@ -20,18 +20,16 @@ def modifiedPascalF(n: Int): List[Int] = {
   def modifiedPascalIter(n: Int): List[Int] = {
     n match {
       case 0 => List(1)
-      case 1 => List(1, 1)
-      case _ if n % 2 == 0 => {
+      case _ => {
         val previous = modifiedPascalIter(n - 1)
-        1 :: sumOfArrays(previous, previous.drop(1))
-      }
-      case _ if n % 2 != 0 => {
-        val previous = modifiedPascalIter(n - 1)
-        1 :: differenceOfArray(previous, previous.drop(1))
+        if n % 2 == 0 then
+          1 :: sumOfArrays(previous, previous.drop(1))
+        else
+          1 :: differenceOfArray(previous, previous.drop(1))
+
       }
     }
   }
-
   modifiedPascalIter(n)
 }
 
