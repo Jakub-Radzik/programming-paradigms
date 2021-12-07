@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class MyQueueImpl<E> implements MyQueue<E> {
 
     private ArrayList<E> list;
-    private int first, position,size;
+    private int f, r,size;
 
     public MyQueueImpl(int size) {
         list = new ArrayList<E>();
         for(int i=0; i<size; i++) list.add(i,null);
-        first = position = 0;
+        f = r = 0;
         this.size = size;
     }
 
@@ -21,27 +21,27 @@ public class MyQueueImpl<E> implements MyQueue<E> {
     @Override
     public void enqueue(E x) throws FullException {
         if(isFull()) throw new FullException("Kolejka pełna!");
-        else {list.set(position,x); position = increment(position); }
+        else {list.set(r,x); r = increment(r); }
     }
 
     @Override
     public void dequeue() {
-        if(!isEmpty()) first = increment(first);
+        if(!isEmpty()) f = increment(f);
     }
 
     @Override
     public E first() throws EmptyException {
         if(isEmpty()) throw new EmptyException("Kolejka Pusta!");
-        else return list.get(first);
+        else return list.get(f);
     }
 
     @Override
     public boolean isEmpty() {
-        return position == first;
+        return r == f;
     }
 
     @Override
     public boolean isFull() {
-        return position - first == -1 || position - first == size;
+        return r - f == -1 || r - f == size;
     }
 }
