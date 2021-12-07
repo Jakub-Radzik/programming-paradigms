@@ -1,65 +1,78 @@
+(*Jakub Radzik*)
+
+(*a*)
 module StackMachine =
 struct
-    type t = { mutable l: float option list }
+    type t = {
+        mutable lx: float option list
+    }
+
     exception DivisionByZero of string
     exception TooFewArguments of string
 
-    let init () = { l = [None]}
+    let init () = {
+        lx= [None]
+    }
 
     type instruction = Rst | LoadF of float | LoadI of int | Cpy | Add | Sub | Mul | Div
 
-    let execute_instruction (inst, cop, n) =
+    let execute_instruction (inst, coproc, n) =
         match inst with
-        | Rst -> cop.l <- [None]
-        | LoadF(f) -> cop.l <- (Some f) :: cop.l
-        | LoadI(i) -> cop.l <- (Some (float_of_int i)) :: cop.l
+        | Rst -> coproc.lx <- [None]
+        | LoadF f -> coproc.lx <- Some f :: coproc.lx
+        | LoadI i -> coproc.lx <- Some (float_of_int i) :: coproc.lx
         | Cpy -> begin
-        	        match cop.l with
-                    | Some(a) :: _ -> cop.l <- (Some a) :: cop.l
+        	        match coproc.lx with
+                    | Some a :: _ -> coproc.lx <- Some a :: coproc.lx
                     | _ -> raise (TooFewArguments ("Cpy: "^(string_of_int n)^". instruction on the list"))
                  end
         | Add -> begin
-                    match cop.l with
-                    | Some(a) :: Some(b) :: t -> cop.l <- (Some (a +. b)) :: t
+                    match coproc.lx with
+                    | Some a :: Some b :: t -> coproc.lx <- Some (a +. b) :: t
                     | _ -> raise (TooFewArguments ("Add: "^(string_of_int n)^". instruction on the list"))
                  end
         | Sub -> begin
-                    match cop.l with
-                    | Some(a) :: Some(b) :: t -> cop.l <- (Some (a -. b)) :: t
+                    match coproc.lx with
+                    | Some a :: Some b :: t -> coproc.lx <- Some (a -. b) :: t
                     | _ -> raise (TooFewArguments ("Sub: "^(string_of_int n)^". instruction on the list"))
                  end
         | Mul -> begin
-                    match cop.l with
-                    | Some(a) :: Some(b) :: t -> cop.l <- (Some (a *. b)) :: t
+                    match coproc.lx with
+                    | Some a :: Some b :: t -> coproc.lx <- Some (a *. b) :: t
                     | _ -> raise (TooFewArguments ("Mul: "^(string_of_int n)^". instruction on the list"))
                  end
         | Div -> begin
-                    match cop.l with
-                    | Some(a) :: Some(b) :: t when b = 0.0 -> raise (DivisionByZero ("Div: "^(string_of_int n)^". instruction on the list"))
-                    | Some(a) :: Some(b) :: t -> cop.l <- (Some (a /. b)) :: t
+                    match coproc.lx with
+                    | Some a :: Some b :: t ->
+                        begin
+                        	if b = 0.0 then
+                        	    raise (DivisionByZero ("Div: "^(string_of_int n)^". instruction on the list"))
+                        	else
+                        	    coproc.lx <- Some (a /. b) :: t
+                        end
                     | _ -> raise (TooFewArguments ("Div: "^(string_of_int n)^". instruction on the list"))
                  end
 
-    let result cop =
-        match cop.l with
+    let result coproc =
+        match coproc.lx with
             | h :: t -> h
             | _ -> failwith "Implementation error"
 
-    let execute (instl, cop) =
+    let execute (instlist, coproc) =
         begin
-            let rec execute_iter (instl, cop, n) =
-                   match instl with
+            let rec execute_iter (instlist, coproc, n) =
+                   match instlist with
                    | h :: t -> begin
-                        execute_instruction(h, cop, n);
-                        execute_iter(t, cop, n + 1)
+                        execute_instruction(h, coproc, n);
+                        execute_iter(t, coproc, n + 1)
                    end
                    | _ -> ()
-           in execute_iter(instl, cop, 1)
+           in execute_iter(instlist, coproc, 1)
         end
 
 end;;
 
-
+(*b*)
 module type COPROCESSOR =
 sig
     type  t
@@ -70,39 +83,26 @@ sig
     val result: t -> float option
     val execute: instruction list * t -> unit
 end;;
-(*
-let t = StackMachine.init();;
-StackMachine.result(t);;
-StackMachine.execute_instruction(StackMachine.LoadF 1.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 2.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 3.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 4.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 5.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.Add, t, 1);;
-StackMachine.execute_instruction(StackMachine.Sub, t, 1);;
-StackMachine.execute_instruction(StackMachine.Cpy, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadI 1, t, 1);;
-StackMachine.execute_instruction(StackMachine.Mul, t, 1);;
-StackMachine.execute_instruction(StackMachine.Div, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 0.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 1.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.Rst, t, 1);;
-t;;
-*)
 
+(*c*)
 module Coprocessor: COPROCESSOR = StackMachine;;
 
-let t = Coprocessor.init();;
-Coprocessor.execute([Coprocessor.LoadF 1.0; Coprocessor.LoadF 2.0; Coprocessor.Add], t);;
-Coprocessor.result(t);;
-Coprocessor.execute([Coprocessor.LoadF 3.0; Coprocessor.Sub], t);;
-Coprocessor.result(t);;
-try Coprocessor.execute([Coprocessor.LoadF 1.0; Coprocessor.Div], t) with
-Coprocessor.DivisionByZero m -> print_string (m);;
-Coprocessor.result(t);;
-Coprocessor.execute([Coprocessor.LoadI 2; Coprocessor.Mul], t);;
-Coprocessor.result(t);;
-Coprocessor.execute([Coprocessor.Cpy], t);;
-Coprocessor.result(t);;
-Coprocessor.execute([Coprocessor.Rst], t);;
-Coprocessor.result(t);;
+(*tests*)
+let testCop = Coprocessor.init();;
+Coprocessor.execute([Coprocessor.LoadF 420.; Coprocessor.LoadF 2137.; Coprocessor.LoadF 69.; Coprocessor.Add], testCop);;
+Coprocessor.result(testCop);;
+Coprocessor.execute([Coprocessor.LoadF 3.; Coprocessor.Sub], testCop);;
+Coprocessor.result(testCop);;
+
+try
+    Coprocessor.execute([Coprocessor.LoadF 2213.; Coprocessor.Add; Coprocessor.LoadF 1.0; Coprocessor.Div], testCop)
+with
+    Coprocessor.DivisionByZero m -> print_string (m);;
+
+Coprocessor.result(testCop);;
+Coprocessor.execute([Coprocessor.LoadI 2; Coprocessor.Mul], testCop);;
+Coprocessor.result(testCop);;
+Coprocessor.execute([Coprocessor.Cpy], testCop);;
+Coprocessor.result(testCop);;
+Coprocessor.execute([Coprocessor.Rst], testCop);;
+Coprocessor.result(testCop);;

@@ -1,3 +1,6 @@
+(*Jakub Radzik*)
+
+(*a*)
 module StackMachine =
 struct
     type t = { mutable l: float option list }
@@ -42,24 +45,25 @@ struct
 
     let result cop =
         match cop.l with
-            | h :: t -> h
+            | h :: _ -> h
             | _ -> failwith "Implementation error"
 
     let execute (instl, cop) =
         begin
             let rec execute_iter (instl, cop, n) =
                    match instl with
-                   | h :: t -> begin
-                        execute_instruction(h, cop, n);
-                        execute_iter(t, cop, n + 1)
-                   end
+                   | h :: t ->
+                       begin
+                            execute_instruction(h, cop, n);
+                            execute_iter(t, cop, n + 1)
+                       end
                    | _ -> ()
            in execute_iter(instl, cop, 1)
         end
 
 end;;
 
-
+(*b*)
 module type COPROCESSOR =
 sig
     type  t
@@ -70,28 +74,11 @@ sig
     val result: t -> float option
     val execute: instruction list * t -> unit
 end;;
-(*
-let t = StackMachine.init();;
-StackMachine.result(t);;
-StackMachine.execute_instruction(StackMachine.LoadF 1.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 2.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 3.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 4.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 5.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.Add, t, 1);;
-StackMachine.execute_instruction(StackMachine.Sub, t, 1);;
-StackMachine.execute_instruction(StackMachine.Cpy, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadI 1, t, 1);;
-StackMachine.execute_instruction(StackMachine.Mul, t, 1);;
-StackMachine.execute_instruction(StackMachine.Div, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 0.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.LoadF 1.0, t, 1);;
-StackMachine.execute_instruction(StackMachine.Rst, t, 1);;
-t;;
-*)
 
+(*c*)
 module Coprocessor: COPROCESSOR = StackMachine;;
 
+(*tests*)
 let t = Coprocessor.init();;
 Coprocessor.execute([Coprocessor.LoadF 1.0; Coprocessor.LoadF 2.0; Coprocessor.Add], t);;
 Coprocessor.result(t);;
