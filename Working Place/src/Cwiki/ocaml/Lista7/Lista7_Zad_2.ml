@@ -37,10 +37,11 @@ module Queue : QUEUE_MUT =
 
         exception Full of string
 
-		let empty size = { queue = Array.make (size+1) None;
+		let empty size = { queue = Array.make (size) None;
 			f = 0; r = 0; s = size}
 
-		let isFull q = q.r - q.f = 1 || q.r - q.f = q.s;;
+		let isFull q = q.r - q.f = -1 || q.r - q.f = Array.length q.queue;;
+
 		let isEmpty q = q.r = q.f;;
 		let inc v q = if v = q.s then 0 else v+1;;
 
@@ -57,3 +58,23 @@ module Queue : QUEUE_MUT =
 				| None -> failwith "Unexpected Error"
 				| Some v -> v;;
 	end;;
+
+(*TESTS *)
+
+let a = Queue.empty(5);;
+Queue.isFull(a) = false;;
+Queue.isEmpty(a) = true;;
+Queue.enqueue(1, a);;
+Queue.enqueue(2, a);;
+Queue.enqueue(3, a);;
+Queue.enqueue(4, a);;
+Queue.enqueue(5, a);;
+Queue.isFull(a)=true;;
+Queue.isEmpty(a)=false;;
+Queue.first(a)=1;;
+Queue.dequeue(a);;
+Queue.first(a)=2;;
+Queue.dequeue(a);;
+Queue.first(a)=3;;
+
+

@@ -14,13 +14,12 @@ def modifiedPascalF(n: Int): List[Int] = {
   def modifiedPascalIter(n: Int): List[Int] = {
     n match {
       case 0 => List(1)
-      case _ => {
+      case _ =>
         val previous = modifiedPascalIter(n - 1)
         if n % 2 == 0 then
           1 :: operationOfList(previous, previous.drop(1), _ + _)
         else
           1 :: operationOfList(previous, previous.drop(1), _ - _)
-      }
     }
   }
 

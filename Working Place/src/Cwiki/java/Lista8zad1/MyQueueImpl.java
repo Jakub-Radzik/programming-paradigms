@@ -42,6 +42,6 @@ public class MyQueueImpl<E> implements MyQueue<E> {
 
     @Override
     public boolean isFull() {
-        return r - f == -1 || r - f == size;
+        return r - f == -1 || (r - f) == size;
     }
 }

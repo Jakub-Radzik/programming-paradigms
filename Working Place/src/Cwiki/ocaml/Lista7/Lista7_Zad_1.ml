@@ -13,7 +13,7 @@ sig
 end;;
 
 (*a - list*)
-module Queue : QUEUE_FUN =
+module Queue_1 : QUEUE_FUN =
 	struct
 		type 'a t = 'a list
 		exception Empty of string
@@ -31,8 +31,22 @@ module Queue : QUEUE_FUN =
 		let isEmpty q = q = [];;
 	end;;
 
+(*tests*)
+
+let a = Queue_1.enqueue(1,Queue_1.empty());;
+let a = Queue_1.enqueue(2, a);;
+let a = Queue_1.enqueue(3, a);;
+Queue_1.first(a) = 1;;
+
+let a = Queue_1.dequeue(a);;
+Queue_1.first(a) = 2;;
+
+let a = Queue_1.dequeue(a);;
+Queue_1.first(a) = 3;;
+
+
 (*b - pair of list*)
-module Queue : QUEUE_FUN =
+module Queue_2 : QUEUE_FUN =
 	struct
 		type 'a t = 'a list * 'a list
 		exception Empty of string
@@ -56,3 +70,16 @@ module Queue : QUEUE_FUN =
 
 		let isEmpty q = fst q = [];;
 	end;;
+
+(*tests*)
+
+let b = Queue_2.enqueue(1,Queue_2.empty());;
+let b = Queue_2.enqueue(2, b);;
+let b = Queue_2.enqueue(3, b);;
+Queue_2.first(b) = 1;;
+
+let b = Queue_2.dequeue(b);;
+Queue_2.first(b) = 2;;
+
+let b = Queue_2.dequeue(b);;
+Queue_2.first(b) = 3;;
