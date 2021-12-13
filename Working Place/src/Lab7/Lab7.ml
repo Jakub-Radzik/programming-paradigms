@@ -95,7 +95,7 @@ Coprocessor.execute([Coprocessor.LoadF 3.; Coprocessor.Sub], testCop);;
 Coprocessor.result(testCop);;
 
 try
-    Coprocessor.execute([Coprocessor.LoadF 2213.; Coprocessor.Add; Coprocessor.LoadF 1.0; Coprocessor.Div], testCop)
+    Coprocessor.execute([Coprocessor.LoadF 0.0; Coprocessor.LoadF 0.0; Coprocessor.Div], testCop)
 with
     Coprocessor.DivisionByZero m -> print_string (m);;
 

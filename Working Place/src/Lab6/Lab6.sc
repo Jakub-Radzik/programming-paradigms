@@ -3,13 +3,13 @@
 
 def modifiedPascalF(n: Int): List[Int] = {
 
-    // HOF - addition or difference
-    def operationOfList(a: List[Int], b: List[Int], op: (Int, Int) => Int): List[Int] =
-      (a, b) match {
-        case (Nil, _) => b
-        case (_, Nil) => a
-        case (x :: xs, y :: ys) => op(x, y) :: operationOfList(xs, ys, op)
-      }
+  // HOF - addition or difference
+  def operationOfList(a: List[Int], b: List[Int], op: (Int, Int) => Int): List[Int] =
+    (a, b) match {
+      case (Nil, _) => b
+      case (_, Nil) => a
+      case (x :: xs, y :: ys) => op(x, y) :: operationOfList(xs, ys, op)
+    }
 
   def modifiedPascalIter(n: Int): List[Int] = {
     n match {
@@ -36,8 +36,8 @@ modifiedPascalF(6)
 modifiedPascalF(7)
 
 def modifiedPascalI(n: Int): Array[Int] =
-  var array_1 = new Array[Int](n + 1)
-  var array_2 = new Array[Int](n + 1)
+  val array_1 = new Array[Int](n + 1)
+  val array_2 = new Array[Int](n + 1)
 
   array_1(0) = 1
   array_2(0) = 1
