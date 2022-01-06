@@ -11,8 +11,8 @@ class Rectangle(val a: Int, val b: Int) {
 }
 
 class Handyman(val fName: String, val lName: String, val age: Int) {
-  if fName.isEmpty || lName.isEmpty then throw new IllegalArgumentException("Imię lub nazwisko puste")
-  if age < 18 then throw new Exception("Za młody!")
+  if fName.isEmpty || lName.isEmpty then throw new IllegalArgumentException("First name and last name cannot be empty")
+  if age < 18 then throw new Exception("Too young")
 }
 
 trait Painter:
