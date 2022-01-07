@@ -16,10 +16,6 @@ class Time(private var h: Int = 0) {
 
 }
 
-//object Time {
-//  def apply(hour: Int) = new Time(hour)
-//}
-
 //2
 class Time2A(private var h: Int, private var m: Int) {
   if h < 0 || h > 23 then throw new IllegalArgumentException("Zła godzina")
@@ -95,7 +91,6 @@ object Main {
     new Pojazd("BMW", "X3", 2016).printInfo()
     new Pojazd("Volvo", "XC60", "ZKO1203").printInfo()
     new Pojazd("Opel", "Astra").printInfo()
-
 
   }
 }
