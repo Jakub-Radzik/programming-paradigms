@@ -7,11 +7,11 @@ class MySemaphore(val n: Int):
 
   def getPermits: Int = permits.get()
 
-  def acquire(num: Int): Unit =
-    while (permits.get() <= 0){}
+  def acquire(num: Int = 1): Unit =
+    while (permits.get() < num){}
     permits.getAndAdd(-num)
 
-  def release(num: Int): Unit =
+  def release(num: Int = 1): Unit =
     permits.getAndAdd(num)
 
 

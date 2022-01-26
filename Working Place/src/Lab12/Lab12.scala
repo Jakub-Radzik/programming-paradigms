@@ -6,7 +6,7 @@ object IntWrapper:
 
   def get: Int =
     try {
-      semaphore.acquire(2137)
+      semaphore.acquire()
     } catch {
       case e: InterruptedException =>
         println("InterruptedException")
@@ -15,7 +15,7 @@ object IntWrapper:
 
   def set(x: Int): Unit =
     i = x
-    semaphore.release(2137)
+    semaphore.release()
 
 class Count extends Thread :
   override def run(): Unit =
